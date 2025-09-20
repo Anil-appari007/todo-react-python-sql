@@ -6,9 +6,19 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi.middleware.cors import CORSMiddleware
+import os
+
+# Read values from environment (with defaults for dev)
+DB_USER = os.getenv("DB_USER", "todo_user")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "password123")
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = os.getenv("DB_PORT", "3306")
+DB_NAME = os.getenv("DB_NAME", "todo_db")
 
 # Database setup
-DATABASE_URL = "mysql+pymysql://todo_user:password123@localhost/todo_db"
+# DATABASE_URL = "mysql+pymysql://todo_user:password123@localhost/todo_db"
+DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 Base = declarative_base()
@@ -139,3 +149,7 @@ def delete_task(task_id: int, db: Session = Depends(get_db), current_user: User 
     db.delete(task)
     db.commit()
     return {"msg": "Deleted"}
+
+@app.get("/status")
+def get_status():
+    return {"status": "running"}
