@@ -1,7 +1,10 @@
-FROM node:20.19.5
+FROM node:20.19.5 AS build
 WORKDIR /app
 COPY . /app/
 RUN npm install
-# RUN npm build
+RUN npm run build
 
-CMD [ "npm", "start" ]
+FROM nginx:1.29.1
+WORKDIR /usr/share/nginx/html
+RUN rm -rf ./*
+COPY --from=build /app/build .
