@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const API_HOST = process.env.BACKEND_API_HOST || "localhost";
+const API_PORT = process.env.BACKEND_API_PORT || "8000";
+const API_URL = `http://${API_HOST}:${API_PORT}`;
+
 function App() {
   const [token, setToken] = useState(null);
   const [username, setUsername] = useState("");
@@ -9,21 +13,21 @@ function App() {
   const [newTask, setNewTask] = useState("");
 
   const login = async () => {
-    const res = await axios.post("http://localhost:8000/token", new URLSearchParams({
+    const res = await axios.post(`${API_URL}/token`, new URLSearchParams({
       username, password
     }));
     setToken(res.data.access_token);
   };
 
   const fetchTasks = async () => {
-    const res = await axios.get("http://localhost:8000/tasks/", {
+    const res = await axios.get(`${API_URL}/tasks/`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setTasks(res.data);
   };
 
   const addTask = async () => {
-    await axios.post(`http://localhost:8000/tasks/`, null, {
+    await axios.post(`${API_URL}/tasks/`, null, {
       params: { title: newTask },
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -31,7 +35,7 @@ function App() {
   };
 
   const updateTask = async (task) => {
-    await axios.put(`http://localhost:8000/tasks/${task.id}`, null, {
+    await axios.put(`${API_URL}/tasks/${task.id}`, null, {
       params: { title: task.title, completed: !task.completed },
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -39,7 +43,7 @@ function App() {
   };
 
   const deleteTask = async (id) => {
-    await axios.delete(`http://localhost:8000/tasks/${id}`, {
+    await axios.delete(`${API_URL}/tasks/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     fetchTasks();

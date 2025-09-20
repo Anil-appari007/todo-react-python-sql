@@ -19,3 +19,8 @@ A To Do application
 ## npm install
 ## npm start // for dev server
 ## npm run build
+
+## Go to localhost:3000
+
+## Create a user with api endpoint
+## curl -X POST "http://localhost:8000/register?username=anil&password=1234"
